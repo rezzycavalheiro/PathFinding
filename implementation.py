@@ -7,7 +7,7 @@
 class SimpleGraph:
     def __init__(self):
         self.edges = {}
-    
+
     def neighbors(self, id):
         return self.edges[id]
 
@@ -25,13 +25,13 @@ import collections
 class Queue:
     def __init__(self):
         self.elements = collections.deque()
-    
+
     def empty(self):
         return len(self.elements) == 0
-    
+
     def put(self, x):
         self.elements.append(x)
-    
+
     def get(self):
         return self.elements.popleft()
 
@@ -69,14 +69,14 @@ class SquareGrid:
         self.width = width
         self.height = height
         self.walls = []
-    
+
     def in_bounds(self, id):
         (x, y) = id
         return 0 <= x < self.width and 0 <= y < self.height
-    
+
     def passable(self, id):
         return id not in self.walls
-    
+
     def neighbors(self, id):
         (x, y) = id
         results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
@@ -89,18 +89,18 @@ class GridWithWeights(SquareGrid):
     def __init__(self, width, height):
         super().__init__(width, height)
         self.weights = {}
-    
+
     def cost(self, from_node, to_node):
         return self.weights.get(to_node, 1)
 
 diagram4 = GridWithWeights(10, 10)
 diagram4.walls = [(1, 7), (1, 8), (2, 7), (2, 8), (3, 7), (3, 8)]
 diagram4.weights = {loc: 5 for loc in [(3, 4), (3, 5), (4, 1), (4, 2),
-                                       (4, 3), (4, 4), (4, 5), (4, 6), 
+                                       (4, 3), (4, 4), (4, 5), (4, 6),
                                        (4, 7), (4, 8), (5, 1), (5, 2),
-                                       (5, 3), (5, 4), (5, 5), (5, 6), 
-                                       (5, 7), (5, 8), (6, 2), (6, 3), 
-                                       (6, 4), (6, 5), (6, 6), (6, 7), 
+                                       (5, 3), (5, 4), (5, 5), (5, 6),
+                                       (5, 7), (5, 8), (6, 2), (6, 3),
+                                       (6, 4), (6, 5), (6, 6), (6, 7),
                                        (7, 3), (7, 4), (7, 5)]}
 
 import heapq
@@ -108,13 +108,13 @@ import heapq
 class PriorityQueue:
     def __init__(self):
         self.elements = []
-    
+
     def empty(self):
         return len(self.elements) == 0
-    
+
     def put(self, item, priority):
         heapq.heappush(self.elements, (priority, item))
-    
+
     def get(self):
         return heapq.heappop(self.elements)[1]
 
@@ -125,13 +125,13 @@ def dijkstra_search(graph, start, goal):
     cost_so_far = {}
     came_from[start] = None
     cost_so_far[start] = 0
-    
+
     while not frontier.empty():
         current = frontier.get()
-        
+
         if current == goal:
             break
-        
+
         for next in graph.neighbors(current):
             new_cost = cost_so_far[current] + graph.cost(current, next)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
@@ -139,7 +139,7 @@ def dijkstra_search(graph, start, goal):
                 priority = new_cost
                 frontier.put(next, priority)
                 came_from[next] = current
-    
+
     return came_from, cost_so_far
 
 # thanks to @m1sp <Jaiden Mispy> for this simpler version of
@@ -167,13 +167,13 @@ def a_star_search(graph, start, goal):
     cost_so_far = {}
     came_from[start] = None
     cost_so_far[start] = 0
-    
+
     while not frontier.empty():
         current = frontier.get()
-        
+
         if current == goal:
             break
-        
+
         for next in graph.neighbors(current):
             new_cost = cost_so_far[current] + graph.cost(current, next)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
@@ -181,5 +181,22 @@ def a_star_search(graph, start, goal):
                 priority = new_cost + heuristic(goal, next)
                 frontier.put(next, priority)
                 came_from[next] = current
-    
+
     return came_from, cost_so_far
+
+def breadth_first_search_1(graph, start):
+    # print out what we find
+    frontier = Queue()
+    frontier.put(start)
+    visited = {}
+    visited[start] = True
+
+    while not frontier.empty():
+        current = frontier.get()
+        print("Visitando %r" % current)
+        for next in graph.neighbors(current):
+            if next not in visited:
+                frontier.put(next)
+                visited[next] = True
+
+breadth_first_search_1(example_graph, 'A')
